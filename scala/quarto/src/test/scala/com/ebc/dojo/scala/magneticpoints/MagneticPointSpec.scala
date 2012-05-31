@@ -1,6 +1,5 @@
 package com.ebc.dojo.scala.magneticpoints
 
-import com.ebc.dojo.scala.magneticpoints.MagneticPoint
 import org.specs2.mutable._
 
 class MagneticPointSpec extends Specification {
