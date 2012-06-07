@@ -6,6 +6,7 @@ version := "0.1-SNAPSHOT"
 
 scalaVersion := "2.9.2"
 
-libraryDependencies += "org.specs2" %% "specs2" % "1.10"
+libraryDependencies += "org.specs2" %% "specs2" % "1.12-SNAPSHOT"
 
-resolvers += "specs2-resolver-0" at "https://oss.sonatype.org/content/repositories/releases"
+resolvers ++= Seq("snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
+                  "releases"  at "http://oss.sonatype.org/content/repositories/releases")

@@ -3,7 +3,7 @@ package com.ebc.dojo.scala.magneticpoints
 import org.specs2._
 import specification._
 
-class MagneticPointSpec extends Specification {
+class MagneticPointImmutableSpec extends Specification {
 
   def is =
     "The Magnetic points" ^
@@ -41,8 +41,8 @@ class MagneticPointSpec extends Specification {
 
   object givenCoord extends Given[Coord](coordPattern) {
     def extract(text: String) = {
-      val (x, y) = extract2(text)
-      (x.toInt, y.toInt)
+      val s = extractAll(text)
+      (s(0).toInt, s(1).toInt)
     }
   }
 
@@ -51,6 +51,11 @@ class MagneticPointSpec extends Specification {
   object andRadius extends When[Coord, Plane](radiusPattern) {
     def extract(coord: Coord, text: String) = {
       List(coord) -> extract1(text).toInt
+    }
+  }
+  object andRadiusCoords extends When[Coords, Plane](radiusPattern) {
+    def extract(coords: Coords, text: String) = {
+      coords -> extract1(text).toInt
     }
   }
 
