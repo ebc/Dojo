@@ -1,27 +1,9 @@
 package com.ebc.dojo.scala.magneticpoints
 
 import org.specs2.mutable._
-//import specification._
-import org.specs2.specification.Fragments
 
-class MagneticPointSpec extends Specification {
-    class context extends Fragments {
-        var magneticPoints: List[(Int, Int)] = Nil
-        var mousePoint: (Int, Int) = (0,0)
-        var radius = 0
-
-        def toTuple(s: Seq[String]) = (s(0).toInt, s(1).toInt)
-        def withNumbers = groupAs("\\d+")
-        def givenMagneticPoints = withNumbers { s: Seq[String] => magneticPoints ::= toTuple(s) }
-        def givenRadius = withNumbers { s: String => radius = s.toInt }
-        def whenMouse = withNumbers { s: Seq[String] => mousePoint = toTuple(s) }
-        def checkResult = withNumbers { s: Seq[String] =>
-            val expected = toTuple(s)
-            val point = new MagneticPoint
-            point drawedPoint (magneticPoints, radius, mousePoint) must beEqualTo(expected)
-        }
-
-    }
+class MagneticPointMutableSpec extends Specification {
+    "Magnetic Points Mutable Specification".title.br
 
     "Magnetic points attract close clicks"   >> new context {
         "Given coordinates 50,50"            << givenMagneticPoints
@@ -51,4 +33,23 @@ class MagneticPointSpec extends Specification {
       "when the mouse pointer is on 51,52"               << whenMouse
       "the result should be 51,51"                       << checkResult
     }
+
+    class context extends NameSpace {
+        var magneticPoints: List[(Int, Int)] = Nil
+        var mousePoint: (Int, Int) = (0,0)
+        var radius = 0
+
+        def toTuple(s: Seq[String]) = (s(0).toInt, s(1).toInt)
+        def withNumbers = groupAs("\\d+")
+        def givenMagneticPoints = withNumbers { s: Seq[String] => magneticPoints ::= toTuple(s) }
+        def givenRadius = withNumbers { s: String => radius = s.toInt }
+        def whenMouse = withNumbers { s: Seq[String] => mousePoint = toTuple(s) }
+        def checkResult = withNumbers { s: Seq[String] =>
+            val expected = toTuple(s)
+            val point = new MagneticPoint
+            point drawedPoint (magneticPoints, radius, mousePoint) must beEqualTo(expected)
+        }
+
+    }
 }
+

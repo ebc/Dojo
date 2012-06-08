@@ -4,9 +4,8 @@ import org.specs2._
 import specification._
 
 class MagneticPointImmutableSpec extends Specification {
-
   def is =
-    "The Magnetic points" ^
+    "Magnetic Points Immutable Specification".title ^
       p ^
       "Given coordinates 50,50" ^ givenCoord ^
       "and the radius is 5" ^ andRadius ^
@@ -19,16 +18,16 @@ class MagneticPointImmutableSpec extends Specification {
       "the result should be 0,0" ^ thenResult ^
       end ^
       "Given coordinates 50,50" ^ givenCoord ^
-      "and coordinates 100,50" ^ givenCoord ^
-      "and the radius is 5" ^ twoCoordsAndRadius ^
+      "and coordinates 100,50" ^ andCoord ^
+      "and the radius is 5" ^ andRadius ^
       "when the mouse pointer is on 101,48" ^ whenMouse ^
       "the result should be 100,50" ^ thenResult ^
       end ^
       "Given coordinates 50,50" ^ givenCoord ^
-      "and coordinates 100,50" ^ givenCoord ^
-      "and the radius is 5" ^ twoCoordsAndRadius ^
-      "when the mouse pointer is on 101,48" ^ whenMouse ^
-      "the result should be 100,50" ^ thenResult ^
+      "and coordinates 51,51" ^ andCoord ^
+      "and the radius is 5" ^ andRadius ^
+      "when the mouse pointer is on 51,52" ^ whenMouse ^
+      "the result should be 51,51" ^ thenResult ^
       end
 
   type Coord = (Int, Int)
@@ -37,51 +36,14 @@ class MagneticPointImmutableSpec extends Specification {
   type Plane = (Coords, Radius)
   type Setup = (Plane, Coord)
 
-  val coordPattern: String = ".*coordinates (\\d+),\\s*(\\d+)"
-
-  object givenCoord extends Given[Coord](coordPattern) {
-    def extract(text: String) = {
-      val s = extractAll(text)
-      (s(0).toInt, s(1).toInt)
-    }
-  }
-
-  val radiusPattern: String = ".*radius is (\\d+)"
-
-  object andRadius extends When[Coord, Plane](radiusPattern) {
-    def extract(coord: Coord, text: String) = {
-      List(coord) -> extract1(text).toInt
-    }
-  }
-  object andRadiusCoords extends When[Coords, Plane](radiusPattern) {
-    def extract(coords: Coords, text: String) = {
-      coords -> extract1(text).toInt
-    }
-  }
-
-  object twoCoordsAndRadius extends When[(Coord, Coord), Plane](radiusPattern) {
-    def extract(coords: (Coord, Coord), text: String) = {
-      List(coords._1, coords._2) -> extract1(text).toInt
-    }
-  }
-
-  val mousePattern: String = ".*mouse pointer is on (\\d+),\\s*(\\d+)"
-
-  object whenMouse extends When[Plane, Setup](mousePattern) {
-    def extract(plane: Plane, text: String) = {
-      val (x, y) = extract2(text)
-      plane ->(x.toInt, y.toInt)
-    }
-  }
-
-  val resultPattern: String = ".*result should be (\\d+),\\s*(\\d+)"
-
-  object thenResult extends Then[Setup](resultPattern) {
-    def extract(setup: Setup, text: String) = {
-      val (x, y) = extract2(text)
+  def toTuple(s: Seq[String]) = (s(0).toInt, s(1).toInt)
+  val withNumbers = groupAs("\\d+")
+  val givenCoord = withNumbers and { s: Seq[String] => List(toTuple(s)) }
+  val andCoord = withNumbers and { (coords: Coords) => (s: Seq[String]) => (toTuple(s)) :: coords }
+  val andRadius = withNumbers and { (coords: Coords) => (s: String) => coords -> s.toInt }
+  val whenMouse = withNumbers and { (plane: Plane) => (s: Seq[String]) => plane -> toTuple(s) }
+  val thenResult = withNumbers then { (setup: Setup) => (s: Seq[String]) =>
       val ((magneticPoints, radius), mousePoint) = setup
-      new MagneticPoint drawedPoint(magneticPoints, radius, mousePoint) must beEqualTo((x.toInt, y.toInt))
-    }
+      new MagneticPoint drawedPoint (magneticPoints, radius, mousePoint) must beEqualTo(toTuple(s))
   }
-
 }
